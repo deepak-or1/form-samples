@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Harborline Agent Portal — New Commercial Quote</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;margin:0;color:#222}
+header{padding:12px 24px;border-bottom:1px solid #888;background:#f2f2f2}
+header h1{margin:0;font-size:20px}
+.wrap{display:flex;gap:28px;padding:16px 24px;max-width:1080px}
+nav{width:170px;flex:none}
+nav ol{list-style:none;margin:0;padding:0}
+nav li{padding:7px 10px;border-left:3px solid #ddd;color:#888}
+nav li[aria-current=step]{border-left-color:#246;color:#222;font-weight:600}
+nav li button{border:0;background:none;padding:0;color:#246;text-decoration:underline;cursor:pointer}
+main{flex:1;min-width:0}
+h2{margin:0 0 8px;font-size:19px}
+h3{margin:0}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 16px}
+.w2{grid-column:span 2}
+.row{margin:8px 0;position:relative}
+label{display:block;margin-bottom:3px;font-weight:600;font-size:14px}
+label.ck{display:inline;font-weight:400}
+input[type=text],input[type=number],input[type=tel],input[type=email],select,textarea{font:inherit;padding:5px 7px;border:1px solid #888;border-radius:4px;width:100%;max-width:340px;box-sizing:border-box}
+textarea{max-width:520px;height:70px}
+fieldset{border:1px solid #888;border-radius:4px;padding:4px 10px 8px;margin:8px 0}
+legend{font-weight:600;font-size:14px}
+[aria-invalid=true]{border-color:#c00!important;box-shadow:0 0 0 1px #c00}
+button{font:inherit;padding:5px 12px;border:1px solid #888;border-radius:4px;background:#f2f2f2;cursor:pointer}
+button:disabled{color:#999;cursor:default}
+.err{color:#a00;margin:6px 0 0;min-height:1em}
+.ft{margin-top:18px;padding-top:12px;border-top:1px solid #ccc}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:40}
+.ov[hidden]{display:none}
+.dlg{background:#fff;border:1px solid #666;border-radius:6px;padding:16px 20px;width:460px}
+.res{margin:12px 0;min-height:40px;border:1px solid #ccc;padding:6px}
+.res div,.opt{padding:3px 0;margin:6px 0}
+.res label,.opt label{display:inline;font-weight:400}
+.acts{text-align:right}
+#lb{position:fixed;inset:0;background:transparent;z-index:50}
+#lb[hidden]{display:none}
+.note{position:absolute;right:16px;bottom:16px;background:#fff;border:1px solid #666;border-radius:6px;padding:10px 14px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+#busy{position:fixed;inset:0;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;z-index:60}
+#busy[hidden]{display:none}
+#busy div{background:#fff;border:1px solid #666;border-radius:6px;padding:12px 20px;font-weight:600}
+.hd{display:block;width:100%;text-align:left;font-size:16px;font-weight:600;padding:9px 12px;border-radius:0;background:#f2f2f2}
+.bd{border:1px solid #888;border-top:0;padding:4px 16px 12px}
+.sec{margin-bottom:8px}
+ul[role=listbox]{list-style:none;margin:2px 0 0;padding:0;border:1px solid #888;width:338px;background:#fff;position:absolute;z-index:2}
+li[role=option]{padding:5px 8px;cursor:pointer}
+li[role=option]:hover{background:#e6eefc}
+select.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+#cat{width:338px;text-align:left;background:#fff}
+#staged li{margin:4px 0}
+table{border-collapse:collapse;min-width:480px}
+th,td{border:1px solid #999;padding:6px 12px;text-align:left}
+.vw{display:flex;gap:16px;margin-top:12px}
+.side{display:flex;flex-direction:column;gap:8px}
+.side button{width:56px;height:72px}
+.side button[aria-pressed=true]{border:2px solid #246}
+.bar{display:flex;gap:6px;margin-bottom:8px}
+.bar button{padding:4px 6px;line-height:0}
+canvas{border:1px solid #999;background:#fff;display:block}
+pre{border:1px solid #ccc;background:#fafafa;padding:8px;margin-top:8px;width:584px;white-space:pre-wrap}
+dl{display:grid;grid-template-columns:220px 1fr;gap:3px 12px;margin:6px 0 14px}
+dt{color:#555}
+dd{margin:0}
+.codes{font-weight:600}
+</style>
+</head>
+<body>
+<div id="app">
+<header><h1>Harborline Agent Portal — New Commercial Quote</h1></header>
+<div class="wrap">
+<nav aria-label="Quote steps"><ol id="steps"></ol></nav>
+<main>
+<section aria-labelledby="t1">
+<h2 id="t1">Account</h2>
+<p class="err" id="a-sum" aria-live="polite"></p>
+<div class="grid">
+<div class="row"><label for="a-name">Business name *</label><input type="text" id="a-name"></div>
+<div class="row"><label for="a-dba">DBA</label><input type="text" id="a-dba"></div>
+<div class="row"><label for="a-fein">FEIN *</label><input type="text" id="a-fein" placeholder="NN-NNNNNNN"></div>
+<div class="row"><label for="a-entity">Entity type *</label><select id="a-entity"><option value="">— Select —</option><option>Corporation</option><option>LLC</option><option>Partnership</option><option>Sole proprietor</option></select></div>
+<div class="row"><label for="a-year">Year business started *</label><input type="text" id="a-year" maxlength="4" inputmode="numeric"></div>
+<div class="row"><label for="a-phone">Phone *</label><input type="tel" id="a-phone"></div>
+<div class="row"><label for="a-email">Email *</label><input type="email" id="a-email"></div>
+<div class="row"><label for="a-web">Website</label><input type="text" id="a-web"></div>
+<div class="row"></div>
+<div class="row"><label for="a-first">Contact first name *</label><input type="text" id="a-first"></div>
+<div class="row"><label for="a-last">Contact last name *</label><input type="text" id="a-last"></div>
+<div class="row"></div>
+<div class="row"><label for="a-mstreet">Mailing street</label><input type="text" id="a-mstreet"></div>
+<div class="row"><label for="a-mcity">Mailing city</label><input type="text" id="a-mcity"></div>
+<div class="row"><label for="a-mstate">Mailing state</label><input type="text" id="a-mstate"></div>
+<div class="row"><label for="a-mzip">Mailing ZIP</label><input type="text" id="a-mzip"></div>
+<div class="row w2"><input type="checkbox" id="a-same"> <label class="ck" for="a-same">Mailing address same as location</label></div>
+</div>
+</section>
+<section aria-labelledby="t2" hidden>
+<h2 id="t2">Location</h2>
+<p class="err" id="l-sum" aria-live="polite"></p>
+<div class="grid">
+<div class="row w2"><label for="street">Street *</label><input type="text" id="street"></div>
+<div class="row"><label for="city">City *</label><input type="text" id="city"></div>
+<div class="row"><label for="state">State *</label><input type="text" id="state" maxlength="2"></div>
+<div class="row"><label for="zip">ZIP *</label><input type="text" id="zip"></div>
+</div>
+<div class="row"><button type="button" id="val">Validate address</button> <span class="err" id="lmsg" aria-live="polite"></span></div>
+<div class="grid">
+<div class="row"><label for="l-sqft">Building square footage *</label><input type="text" id="l-sqft"></div>
+<div class="row"><label for="l-year">Year built *</label><input type="text" id="l-year" maxlength="4" inputmode="numeric"></div>
+<div class="row"><label for="l-cons">Construction type *</label><select id="l-cons"><option value="">— Select —</option><option>Frame</option><option>Joisted masonry</option><option>Masonry non-combustible</option><option>Fire resistive</option></select></div>
+<fieldset id="l-spr" role="radiogroup"><legend>Sprinklered *</legend><input type="radio" name="spr" id="l-spy" value="Y"> <label class="ck" for="l-spy">Yes</label> <input type="radio" name="spr" id="l-spn" value="N"> <label class="ck" for="l-spn">No</label></fieldset>
+<div class="row"><label for="l-occ">Occupancy</label><select id="l-occ"><option value="">— Select —</option><option>Owner</option><option>Tenant</option></select></div>
+</div>
+<div class="ov" id="da" hidden>
+<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dat">
+<h2 id="dat">We found similar addresses</h2>
+<div id="opts"></div>
+<div class="acts"><button type="button" id="use">Use selected address</button> <button type="button" id="l-cxl">Cancel</button></div>
+</div>
+</div>
+<div id="lb" hidden>
+<div class="note"><span>Address updated</span> <button type="button" id="ok">OK</button></div>
+</div>
+</section>
+<section aria-labelledby="t3" hidden>
+<h2 id="t3">Classifications</h2>
+<div class="row"><label for="cc">Class code</label><input id="cc" type="text" readonly> <button type="button" id="find" aria-disabled="true" data-requires="state">Search class codes</button></div>
+<div class="row" id="prow" hidden><label for="pay">Annual payroll</label><input id="pay" type="number" min="0" step="1"></div>
+<div class="row"><label for="c-ft">Full-time employees *</label><input id="c-ft" type="number" min="0" step="1"></div>
+<div class="row"><label for="c-pt">Part-time employees *</label><input id="c-pt" type="number" min="0" step="1"></div>
+<fieldset id="c-off" role="radiogroup"><legend>Officers included in payroll</legend><input type="radio" name="off" id="c-offy"> <label class="ck" for="c-offy">Yes</label> <input type="radio" name="off" id="c-offn"> <label class="ck" for="c-offn">No</label></fieldset>
+<div class="row"><label for="st">Governing state *</label><select id="st"><option value="">— Select —</option><option value="OH">OH</option><option value="PA">PA</option><option value="NY">NY</option></select></div>
+<div class="ov" id="ov" hidden>
+<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dt">
+<h2 id="dt">Class code search</h2>
+<label for="term">Search term</label>
+<input id="term" type="text"> <button type="button" id="go">Search</button>
+<div class="res" id="res"></div>
+<div class="acts"><button type="button" id="sel">Select</button> <button type="button" id="c-cxl">Cancel</button></div>
+</div>
+</div>
+</section>
+<section aria-labelledby="t4" hidden>
+<h2 id="t4">Coverage</h2>
+<div class="sec">
+<h3><button type="button" class="hd" id="v-h0" aria-expanded="true" aria-controls="v-b0">Business description</button></h3>
+<div class="bd" id="v-b0" role="region" aria-labelledby="v-h0">
+<div class="row"><label for="ind">Industry *</label><input type="text" id="ind" autocomplete="off" aria-controls="sug"><ul id="sug" role="listbox" aria-label="Industry" hidden></ul></div>
+<div class="row"><label for="desc">Description of operations</label><textarea id="desc"></textarea></div>
+<p class="err" id="v-e0"></p>
+</div>
+</div>
+<div class="sec">
+<h3><button type="button" class="hd" id="v-h1" aria-expanded="false" aria-controls="v-b1">Limits</button></h3>
+<div class="bd" id="v-b1" role="region" aria-labelledby="v-h1" hidden>
+<div class="row"><label for="lim">Liability limit *</label><select id="lim"><option value="">— Select —</option><option value="500000">500,000</option><option value="1000000">1,000,000</option><option value="2000000">2,000,000</option></select></div>
+<div class="row"><label for="ded">Deductible *</label><select id="ded"><option value="">— Select —</option><option value="500">500</option><option value="1000">1,000</option><option value="2500">2,500</option></select></div>
+<p class="err" id="v-e1"></p>
+</div>
+</div>
+<div class="sec">
+<h3><button type="button" class="hd" id="v-h2" aria-expanded="false" aria-controls="v-b2">Optional coverages</button></h3>
+<div class="bd" id="v-b2" role="region" aria-labelledby="v-h2" hidden>
+<fieldset id="v-opt"><legend>Optional coverages</legend><div id="v-cov"></div></fieldset>
+</div>
+</div>
+</section>
+<section aria-labelledby="t5" hidden>
+<h2 id="t5">Documents</h2>
+<fieldset>
+<legend>Add a document</legend>
+<div class="row"><label for="dn">Document name</label><input type="text" id="dn"></div>
+<div class="row">
+<label for="category">Category</label>
+<select name="category" id="category" class="vh"><option value=""></option><option>Application</option><option>Loss history</option><option>Financials</option><option>Other</option></select>
+<button type="button" id="cat" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="cl">Select category</button>
+<ul id="cl" role="listbox" hidden><li role="option">Application</li><li role="option">Loss history</li><li role="option">Financials</li><li role="option">Other</li></ul>
+</div>
+<button type="button" id="add">Add document</button>
+<div class="err" id="d-msg" aria-live="polite"></div>
+</fieldset>
+<h3>Staged documents</h3>
+<p id="none">None</p>
+<ul id="staged"></ul>
+</section>
+<section aria-labelledby="t6" hidden>
+<h2 id="t6">Prior policy</h2>
+<h3>Prior policy documents on file</h3>
+<div id="p-list">
+<table>
+<thead><tr><th>Term</th><th>Document</th><th></th></tr></thead>
+<tbody>
+<tr><td>2024–2025</td><td>Declarations</td><td><button type="button" data-d="0">View</button></td></tr>
+<tr><td>2025–2026</td><td>Declarations</td><td><button type="button" data-d="1">View</button></td></tr>
+<tr><td>2026–2027</td><td>Declarations</td><td><button type="button" data-d="2">View</button></td></tr>
+</tbody>
+</table>
+</div>
+<div id="p-view" hidden>
+<button type="button" id="p-back">Back to list</button>
+<div class="vw">
+<div class="side"><button type="button" data-p="0">1</button><button type="button" data-p="1">2</button></div>
+<div>
+<div class="bar">
+<button type="button" id="zin"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M13 13l5 5M5 8h6M8 5v6"/></svg></button>
+<button type="button" id="zout"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M13 13l5 5M5 8h6"/></svg></button>
+<button type="button" id="fit"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="2"><path d="M1 10h18M5 6l-4 4 4 4M15 6l4 4-4 4"/></svg></button>
+<button type="button" id="txt"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="2"><path d="M3 4h14M3 8h14M3 12h14M3 16h9"/></svg></button>
+</div>
+<canvas id="cv" width="600" height="400"></canvas>
+<pre id="pt" hidden></pre>
+</div>
+</div>
+</div>
+<div class="row"><label for="p-num">Prior policy number *</label><input type="text" id="p-num"></div>
+<div class="row"><label for="p-prem">Prior total premium *</label><input type="text" id="p-prem"></div>
+</section>
+<section aria-labelledby="t7" hidden>
+<h2 id="t7">Review</h2>
+<div id="r-sum"></div>
+<p class="codes" id="r-codes"></p>
+<p class="codes" id="r-ref"></p>
+<p>Review only. Submitting sends the application to underwriting.</p>
+<button type="button" id="submit">Submit application</button>
+</section>
+</main>
+</div>
+</div>
+<div id="busy" hidden><div role="status">Saving…</div></div>
+<script>
+(function(){
+function code(s){let h=7;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i)*(i+1))%60466176}return 'CF-'+h.toString(36).toUpperCase().padStart(5,'0')}
+function $(i){return document.getElementById(i)}
+function val(i){return $(i).value.trim()}
+function digits(s){return String(s).replace(/[^0-9]/g,"")}
+function req(v){return v!==""}
+function pat(re){return function(v){return re.exec(v)!==null}}
+function picked1(v,el){return !!el.querySelector("input:checked")}
+function mark(el,bad){if(bad){el.setAttribute("aria-invalid","true")}else{el.removeAttribute("aria-invalid")}}
+function check(rules){var bad=false;rules.forEach(function(r){var el=$(r[0]);var b=!r[1]((el.value||"").trim(),el);mark(el,b);if(b)bad=true});return !bad}
+var NAMES=["Account","Location","Classifications","Coverage","Documents","Prior policy","Review"];
+var secs=Array.prototype.slice.call(document.querySelectorAll("main > section")),steps=$("steps"),app=$("app"),busy=$("busy");
+var cur=0,saving=false,fm=[];
+
+var LR=[["street",req],["city",req],["state",pat(/^[A-Za-z]{2}$/)],["zip",pat(/^\d{5}(-\d{4})?$/)]];
+var F=["street","city","state","zip"].map($),lmsg=$("lmsg"),da=$("da"),opts=$("opts"),lb=$("lb");
+var addrOk=false,choices=[];
+F.forEach(function(f){f.addEventListener("input",function(){addrOk=false})});
+function fmt(a){return a[0]+", "+a[1]+", "+a[2]+" "+a[3]}
+$("val").addEventListener("click",function(){
+var v=F.map(function(f){return f.value.trim()});
+if(v.some(function(x){return !x})){lmsg.textContent="Enter the full address.";return}
+lmsg.textContent="";
+choices=[[v[0].toUpperCase(),v[1].toUpperCase(),v[2].toUpperCase(),v[3]+"-2207"],v];
+var names=["Standardized","As entered"];
+opts.innerHTML="";
+choices.forEach(function(c,i){
+var d=document.createElement("div");d.className="opt";
+var r=document.createElement("input");r.type="radio";r.name="addr";r.id="addr"+i;r.value=String(i);
+var l=document.createElement("label");l.htmlFor=r.id;l.textContent=" "+names[i]+": "+fmt(c);
+d.appendChild(r);d.appendChild(l);opts.appendChild(d);
+});
+da.hidden=false;
+});
+$("l-cxl").addEventListener("click",function(){da.hidden=true});
+$("use").addEventListener("click",function(){
+var r=opts.querySelector("input:checked");
+if(!r)return;
+var c=choices[Number(r.value)];
+F.forEach(function(f,i){f.value=c[i]});
+addrOk=true;da.hidden=true;lb.hidden=false;
+});
+$("ok").addEventListener("click",function(){lb.hidden=true});
+
+var CL=[["8810","Clerical Office"],["8742","Outside Sales"],["5183","Plumbing"],["9015","Building Operations"],["0042","Landscape Gardening"],["8017","Retail Store"]];
+var st=$("st"),fb=$("find"),ov=$("ov"),res=$("res"),term=$("term"),cc=$("cc"),pay=$("pay"),prow=$("prow");
+var cls=null;
+st.addEventListener("change",function(){if(st.value){fb.removeAttribute("aria-disabled")}else{fb.setAttribute("aria-disabled","true")}});
+fb.addEventListener("click",function(){
+if(!st.value)return;
+res.innerHTML="";term.value="";ov.hidden=false;term.focus();
+});
+$("go").addEventListener("click",function(){
+var q=term.value.trim().toLowerCase();
+res.innerHTML="";
+CL.forEach(function(r,i){
+if(q&&r[0].toLowerCase().indexOf(q)<0&&r[1].toLowerCase().indexOf(q)<0)return;
+var d=document.createElement("div");
+var rb=document.createElement("input");rb.type="radio";rb.name="cr";rb.value=String(i);rb.id="cr"+i;
+var lbl=document.createElement("label");lbl.htmlFor=rb.id;lbl.textContent=" "+r[0]+" "+r[1];
+d.appendChild(rb);d.appendChild(lbl);res.appendChild(d);
+});
+});
+$("sel").addEventListener("click",function(){
+var c=res.querySelector("input:checked");
+if(!c)return;
+cls=CL[Number(c.value)];
+cc.value=cls[0]+" "+cls[1];
+prow.hidden=false;ov.hidden=true;fb.focus();
+});
+$("c-cxl").addEventListener("click",function(){ov.hidden=true;fb.focus()});
+
+var IND=["Retail Hardware","Retail Bakery","Landscaping Services","Land Surveying","Janitorial Services","Plumbing Contractors","IT Consulting"];
+var COV=["Equipment breakdown","Cyber liability","Employment practices","Hired and non-owned auto","Business income extension","Flood"];
+var vh=[0,1,2].map(function(i){return $("v-h"+i)}),vb=[0,1,2].map(function(i){return $("v-b"+i)}),ind=$("ind"),sug=$("sug"),ve=[$("v-e0"),$("v-e1")];
+var chosen=null;
+COV.forEach(function(c,i){
+var d=document.createElement("div");d.className="row";
+var cb=document.createElement("input");cb.type="checkbox";cb.id="v-o"+i;
+var l=document.createElement("label");l.className="ck";l.htmlFor=cb.id;l.textContent=c;
+d.appendChild(cb);d.appendChild(document.createTextNode(" "));d.appendChild(l);$("v-cov").appendChild(d);
+});
+function openSec(n){for(var i=0;i<3;i++){vb[i].hidden=i!==n;vh[i].setAttribute("aria-expanded",i===n?"true":"false")}}
+vh.forEach(function(h,i){h.addEventListener("click",function(){openSec(i)})});
+ind.addEventListener("input",function(){
+chosen=null;
+var q=ind.value.trim().toLowerCase();
+sug.innerHTML="";
+if(q.length<2){sug.hidden=true;return}
+var m=IND.filter(function(x){return x.toLowerCase().indexOf(q)>=0});
+m.forEach(function(x){
+var li=document.createElement("li");li.setAttribute("role","option");li.textContent=x;
+li.addEventListener("click",function(){ind.value=x;chosen=x;sug.hidden=true;sug.innerHTML=""});
+sug.appendChild(li);
+});
+sug.hidden=m.length===0;
+});
+
+var dn=$("dn"),nat=$("category"),cbx=$("cat"),cl=$("cl"),dmsg=$("d-msg"),staged=$("staged"),none=$("none");
+var cat=null,rows=[];
+function setOpen(o){cl.hidden=!o;cbx.setAttribute("aria-expanded",o?"true":"false")}
+cbx.addEventListener("click",function(){setOpen(cl.hidden)});
+cl.querySelectorAll("[role=option]").forEach(function(li){
+li.addEventListener("click",function(){cat=li.textContent;cbx.textContent=cat;nat.value=cat;setOpen(false)});
+});
+function renderRows(){
+staged.innerHTML="";
+rows.forEach(function(r,i){
+var li=document.createElement("li");var s=document.createElement("span");s.textContent=r[0]+" — "+r[1];
+var b=document.createElement("button");b.type="button";b.textContent="Remove";
+b.addEventListener("click",function(){rows.splice(i,1);renderRows()});
+li.appendChild(s);li.appendChild(document.createTextNode(" "));li.appendChild(b);staged.appendChild(li);
+});
+none.hidden=rows.length>0;
+}
+$("add").addEventListener("click",function(){
+var n=dn.value.trim();
+if(!n){dmsg.textContent="Enter a document name.";return}
+if(!cat){dmsg.textContent="Category is required.";return}
+rows.push([n,cat]);renderRows();
+dn.value="";cat=null;nat.value="";cbx.textContent="Select category";dmsg.textContent="";
+});
+
+var DOCS=[["REVDTEFSQVRJT05TIC0gUEFHRSAxCk5hbWVkIGluc3VyZWQ6IEhhcmJvcmxpbmUgRmFicmljYXRpb24gTExDCk1haWxpbmcgYWRkcmVzczogMjI5MCBLZXNzbGVyIEF2ZQpEYXl0b24sIE9IIDQ1NDAyClBvbGljeSBwZXJpb2Q6IDAzLzAxLzIwMjQgdG8gMDMvMDEvMjAyNQoxMjowMSBhLm0uIHN0YW5kYXJkIHRpbWUgYXQgdGhlIG1haWxpbmcgYWRkcmVzcw==","REVDTEFSQVRJT05TIC0gUEFHRSAyClBvbGljeSBudW1iZXI6IFFYLTE5ODgwLUEKRWFjaCBvY2N1cnJlbmNlIGxpbWl0OiAkMSwwMDAsMDAwCkdlbmVyYWwgYWdncmVnYXRlIGxpbWl0OiAkMiwwMDAsMDAwClBvbGljeSBmZWU6ICQxMjUuMDAKVG90YWwgcHJlbWl1bTogJDMsOTAyLjAw"],["REVDTEFSQVRJT05TIC0gUEFHRSAxCk5hbWVkIGluc3VyZWQ6IEhhcmJvcmxpbmUgRmFicmljYXRpb24gTExDCk1haWxpbmcgYWRkcmVzczogMjI5MCBLZXNzbGVyIEF2ZQpEYXl0b24sIE9IIDQ1NDAyClBvbGljeSBwZXJpb2Q6IDAzLzAxLzIwMjUgdG8gMDMvMDEvMjAyNgoxMjowMSBhLm0uIHN0YW5kYXJkIHRpbWUgYXQgdGhlIG1haWxpbmcgYWRkcmVzcw==","REVDTEFSQVRJT05TIC0gUEFHRSAyClBvbGljeSBudW1iZXI6IFFYLTIwNDE3LUIKRWFjaCBvY2N1cnJlbmNlIGxpbWl0OiAkMSwwMDAsMDAwCkdlbmVyYWwgYWdncmVnYXRlIGxpbWl0OiAkMiwwMDAsMDAwClBvbGljeSBmZWU6ICQxNTAuMDAKVG90YWwgcHJlbWl1bTogJDQsMzE4LjAw"],["REVDTEFSQVRJT05TIC0gUEFHRSAxCk5hbWVkIGluc3VyZWQ6IEhhcmJvcmxpbmUgRmFicmljYXRpb24gTExDCk1haWxpbmcgYWRkcmVzczogMjI5MCBLZXNzbGVyIEF2ZQpEYXl0b24sIE9IIDQ1NDAyClBvbGljeSBwZXJpb2Q6IDAzLzAxLzIwMjYgdG8gMDMvMDEvMjAyNwoxMjowMSBhLm0uIHN0YW5kYXJkIHRpbWUgYXQgdGhlIG1haWxpbmcgYWRkcmVzcw==","REVDTEFSQVRJT05TIC0gUEFHRSAyClBvbGljeSBudW1iZXI6IFFYLTIxMTA1LUMKRWFjaCBvY2N1cnJlbmNlIGxpbWl0OiAkMSwwMDAsMDAwCkdlbmVyYWwgYWdncmVnYXRlIGxpbWl0OiAkMiwwMDAsMDAwClBvbGljeSBmZWU6ICQxNzUuMDAKVG90YWwgcHJlbWl1bTogJDQsNzY2LjAw"]];
+var plist=$("p-list"),pview=$("p-view"),cv=$("cv"),cx=cv.getContext("2d"),pt=$("pt"),th=document.querySelectorAll("[data-p]");
+var doc=0,pg=0,sc=1,showText=false,B=16;
+function lines(){return atob(DOCS[doc][pg]).split("\n")}
+function draw(){
+var ls=lines(),fs=B*sc;
+cx.fillStyle="#fff";cx.fillRect(0,0,cv.width,cv.height);
+cx.fillStyle="#111";cx.font=fs+"px Georgia,serif";cx.textBaseline="top";
+for(var i=0;i<ls.length;i++){cx.fillText(ls[i],20,20+i*fs*1.6)}
+for(var j=0;j<th.length;j++){th[j].setAttribute("aria-pressed",j===pg?"true":"false")}
+if(showText){pt.textContent=ls.join("\n")}
+}
+function fit(){
+var ls=lines(),w=0;cx.font=B+"px Georgia,serif";
+for(var i=0;i<ls.length;i++){w=Math.max(w,cx.measureText(ls[i]).width)}
+sc=w?(cv.width-40)/w:1;draw();
+}
+document.querySelectorAll("[data-d]").forEach(function(btn){
+btn.addEventListener("click",function(){
+doc=Number(btn.getAttribute("data-d"));pg=0;sc=1;showText=false;pt.hidden=true;pt.textContent="";
+plist.hidden=true;pview.hidden=false;draw();
+});
+});
+th.forEach(function(btn){btn.addEventListener("click",function(){pg=Number(btn.getAttribute("data-p"));draw()})});
+$("p-back").addEventListener("click",function(){showText=false;pt.hidden=true;pt.textContent="";cx.clearRect(0,0,cv.width,cv.height);pview.hidden=true;plist.hidden=false});
+$("zin").addEventListener("click",function(){sc=Math.min(sc*1.25,4);draw()});
+$("zout").addEventListener("click",function(){sc=Math.max(sc/1.25,0.4);draw()});
+$("fit").addEventListener("click",fit);
+$("txt").addEventListener("click",function(){
+showText=!showText;
+if(showText){pt.hidden=false;pt.textContent=lines().join("\n")}else{pt.hidden=true;pt.textContent=""}
+});
+
+var CHECK=[
+function(){var ok=check([["a-name",req],["a-fein",pat(/^\d{2}-\d{7}$/)],["a-entity",req],["a-year",pat(/^\d{4}$/)],["a-phone",function(v){return digits(v).length>=10}],["a-email",pat(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)],["a-first",req],["a-last",req]]);
+$("a-sum").textContent=ok?"":"Complete the highlighted fields.";return ok},
+function(){var ok=check(LR.concat([["l-sqft",function(v){return digits(v)!==""}],["l-year",pat(/^\d{4}$/)],["l-cons",req],["l-spr",picked1]]));
+$("l-sum").textContent=ok?"":"Complete the highlighted fields.";
+lmsg.textContent=addrOk?"":"Validate the address before continuing.";return ok&&addrOk},
+function(){var p=Number(pay.value),n=/^\d+$/;
+var ok=!!(cls&&pay.value!==""&&isFinite(p)&&p>0&&n.exec(val("c-ft"))&&n.exec(val("c-pt"))&&st.value);
+fm[2].textContent=ok?"":"Complete the required fields.";return ok},
+function(){ve[0].textContent="";ve[1].textContent="";
+if(!chosen){ve[0].textContent="Select an industry from the list";return false}
+if(!$("lim").value){ve[1].textContent="Select a liability limit";return false}
+if(!$("ded").value){ve[1].textContent="Select a deductible";return false}
+return true},
+function(){if(rows.length<2){dmsg.textContent="Add at least two documents.";return false}dmsg.textContent="";return true},
+function(){var ok=val("p-num")!==""&&val("p-prem")!=="";fm[5].textContent=ok?"":"Complete the required fields.";return ok}
+];
+
+function labelOf(id){var el=$(id);var t=el.tagName==="FIELDSET"?el.querySelector("legend").textContent:document.querySelector('label[for="'+id+'"]').textContent;return t.replace(/\s*\*$/,"")}
+function shown(id){
+var el=$(id);
+if(el.tagName==="FIELDSET"){var c=Array.prototype.slice.call(el.querySelectorAll("input:checked")).map(function(x){return document.querySelector('label[for="'+x.id+'"]').textContent});return c.length?c.join(", "):"—"}
+if(el.tagName==="SELECT")return el.value?el.options[el.selectedIndex].text:"—";
+if(el.type==="checkbox")return el.checked?"Yes":"No";
+return el.value.trim()||"—";
+}
+var G=[["Account",["a-name","a-dba","a-fein","a-entity","a-year","a-phone","a-email","a-web","a-first","a-last","a-mstreet","a-mcity","a-mstate","a-mzip","a-same"]],["Location",["street","city","state","zip","l-sqft","l-year","l-cons","l-spr","l-occ"]],["Classifications",["cc","pay","c-ft","c-pt","c-off","st"]],["Coverage",["ind","desc","lim","ded","v-opt"]],["Documents",[]],["Prior policy",["p-num","p-prem"]]];
+function strings(){
+return [
+[val("a-name"),val("a-fein"),$("a-entity").value,val("a-year"),val("a-first")+" "+val("a-last")].join("|"),
+[val("street"),val("city"),val("state"),val("zip"),digits(val("l-sqft")),val("l-year"),$("l-cons").value,$("l-spy").checked?"Y":"N"].join("|"),
+[st.value,cls?cls[0]:"",digits(pay.value),val("c-ft"),val("c-pt")].join("|"),
+[chosen||"",digits($("lim").value),digits($("ded").value),COV.filter(function(c,i){return $("v-o"+i).checked}).join(",")].join("|"),
+rows.map(function(r){return r[0]+"|"+r[1]}).join(";"),
+val("p-num").toUpperCase()+"|"+digits(val("p-prem"))
+];
+}
+function review(){
+var box=$("r-sum");box.innerHTML="";
+G.forEach(function(g){
+var h=document.createElement("h3");h.textContent=g[0];box.appendChild(h);
+var dl=document.createElement("dl");
+var items=g[0]==="Documents"?rows.map(function(r,i){return ["Document "+(i+1),r[0]+" — "+r[1]]}):g[1].map(function(id){return [labelOf(id),shown(id)]});
+items.forEach(function(it){var dt=document.createElement("dt");dt.textContent=it[0];var dd=document.createElement("dd");dd.textContent=it[1];dl.appendChild(dt);dl.appendChild(dd)});
+box.appendChild(dl);
+});
+var S=strings(),P=["A","L","C","V","D","P"];
+$("r-codes").textContent="Check codes: "+S.map(function(s,i){return P[i]+"-"+code(s).slice(3)}).join(" ");
+$("r-ref").textContent="Quote reference: "+code(S.join("~"));
+}
+$("submit").addEventListener("click",function(){
+var n=code("SUBMIT~"+strings().join("~"));
+document.body.innerHTML="";var p=document.createElement("p");p.textContent="Application submitted. Submission number: "+n;document.body.appendChild(p);
+});
+
+function renderNav(){
+steps.innerHTML="";
+NAMES.forEach(function(n,i){
+var li=document.createElement("li"),t=(i+1)+" "+n;
+if(i<cur){var b=document.createElement("button");b.type="button";b.textContent=t;b.addEventListener("click",function(){if(!saving)show(i)});li.appendChild(b)}
+else{li.textContent=t;if(i===cur)li.setAttribute("aria-current","step")}
+steps.appendChild(li);
+});
+}
+function show(n){
+cur=n;
+secs.forEach(function(s,i){s.hidden=i!==n});
+if(n===3)openSec(0);
+if(n===6)review();
+renderNav();window.scrollTo(0,0);
+}
+function save(i){
+if(saving||i!==cur||!CHECK[i]())return;
+saving=true;busy.hidden=false;app.inert=true;
+setTimeout(function(){saving=false;busy.hidden=true;app.inert=false;show(i+1)},1200+Math.floor(Math.random()*1301));
+}
+secs.forEach(function(s,i){
+var f=document.createElement("div");f.className="ft";
+var b=document.createElement("button");b.type="button";b.textContent="Back";b.disabled=i===0;
+b.addEventListener("click",function(){if(!saving&&cur>0)show(cur-1)});f.appendChild(b);
+if(i<6){var c=document.createElement("button");c.type="button";c.textContent="Save and continue";
+c.addEventListener("click",function(){save(i)});f.appendChild(document.createTextNode(" "));f.appendChild(c)}
+var m=document.createElement("div");m.className="err";m.setAttribute("aria-live","polite");f.appendChild(m);fm[i]=m;
+s.appendChild(f);
+});
+show(0);
+})();
+</script>
+</body>
+</html>
