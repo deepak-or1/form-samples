@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Location address</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;margin:24px;color:#222;max-width:720px}
+.row{margin:12px 0}
+label{display:block;margin-bottom:4px;font-weight:600}
+input[type=text]{font:inherit;padding:6px 8px;border:1px solid #888;border-radius:4px;width:320px}
+button{font:inherit;padding:6px 12px;border:1px solid #888;border-radius:4px;background:#f2f2f2;cursor:pointer}
+#msg{margin-top:8px;color:#a00}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center}
+.ov[hidden]{display:none}
+.dlg{background:#fff;border:1px solid #666;border-radius:6px;padding:16px 20px;width:480px}
+.opt{margin:10px 0}
+.opt label{display:inline;font-weight:400}
+.acts{text-align:right}
+#lb{position:fixed;inset:0;background:transparent}
+#lb[hidden]{display:none}
+.note{position:absolute;right:16px;bottom:16px;background:#fff;border:1px solid #666;border-radius:6px;padding:10px 14px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+</style>
+</head>
+<body>
+<h1>Location address</h1>
+<div id="main">
+<div class="row"><label for="street">Street</label><input type="text" id="street"></div>
+<div class="row"><label for="city">City</label><input type="text" id="city"></div>
+<div class="row"><label for="state">State</label><input type="text" id="state" maxlength="2"></div>
+<div class="row"><label for="zip">ZIP</label><input type="text" id="zip"></div>
+<div class="row"><button type="button" id="val">Validate address</button> <button type="button" id="save">Save location</button></div>
+<div id="msg" aria-live="polite"></div>
+</div>
+<div class="ov" id="da" hidden>
+<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dat">
+<h2 id="dat">We found similar addresses</h2>
+<div id="opts"></div>
+<div class="acts"><button type="button" id="use">Use selected address</button> <button type="button" id="cxl">Cancel</button></div>
+</div>
+</div>
+<div id="lb" hidden>
+<div class="note"><span>Address updated</span> <button type="button" id="ok">OK</button></div>
+</div>
+<script>
+(function(){
+function code(s){let h=7;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i)*(i+1))%60466176}return 'CF-'+h.toString(36).toUpperCase().padStart(5,'0')}
+function $(i){return document.getElementById(i)}
+var F=["street","city","state","zip"].map($),msg=$("msg"),da=$("da"),opts=$("opts"),lb=$("lb");
+var ok=false,choices=[];
+F.forEach(function(f){f.addEventListener("input",function(){ok=false})});
+function fmt(a){return a[0]+", "+a[1]+", "+a[2]+" "+a[3]}
+$("val").addEventListener("click",function(){
+var v=F.map(function(f){return f.value.trim()});
+if(v.some(function(x){return !x})){msg.textContent="Enter the full address.";return}
+msg.textContent="";
+choices=[[v[0].toUpperCase(),v[1].toUpperCase(),v[2].toUpperCase(),v[3]+"-2207"],v];
+var names=["Standardized","As entered"];
+opts.innerHTML="";
+choices.forEach(function(c,i){
+var d=document.createElement("div");d.className="opt";
+var r=document.createElement("input");r.type="radio";r.name="addr";r.id="addr"+i;r.value=String(i);
+var l=document.createElement("label");l.htmlFor=r.id;l.textContent=" "+names[i]+": "+fmt(c);
+d.appendChild(r);d.appendChild(l);opts.appendChild(d);
+});
+da.hidden=false;
+});
+$("cxl").addEventListener("click",function(){da.hidden=true});
+$("use").addEventListener("click",function(){
+var r=opts.querySelector("input:checked");
+if(!r)return;
+var c=choices[Number(r.value)];
+F.forEach(function(f,i){f.value=c[i]});
+ok=true;da.hidden=true;lb.hidden=false;
+});
+$("ok").addEventListener("click",function(){lb.hidden=true});
+$("save").addEventListener("click",function(){
+if(!ok){msg.textContent="Validate the address before saving.";return}
+var t="Saved. Confirmation: "+code(F.map(function(f){return f.value}).join("|"));
+var m=$("main");m.innerHTML="";var p=document.createElement("p");p.textContent=t;m.appendChild(p);
+});
+})();
+</script>
+</body>
+</html>

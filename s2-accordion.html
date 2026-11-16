@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New quote — Step 2 of 3</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;margin:24px;color:#222;max-width:720px}
+h2{margin:0}
+.hd{display:block;width:100%;text-align:left;font:inherit;font-size:18px;font-weight:600;padding:10px 12px;border:1px solid #888;background:#f2f2f2;cursor:pointer}
+.bd{border:1px solid #888;border-top:0;padding:4px 16px 12px}
+.sec{margin-bottom:10px}
+.row{margin:12px 0;position:relative}
+label{display:block;margin-bottom:4px;font-weight:600}
+.row label.ck{display:inline;font-weight:400}
+input[type=text],select{font:inherit;padding:6px 8px;border:1px solid #888;border-radius:4px;width:320px}
+button{font:inherit}
+#go{padding:6px 14px;border:1px solid #888;border-radius:4px;background:#f2f2f2;cursor:pointer}
+ul[role=listbox]{list-style:none;margin:2px 0 0;padding:0;border:1px solid #888;width:336px;background:#fff}
+li[role=option]{padding:5px 8px;cursor:pointer}
+li[role=option]:hover{background:#e6eefc}
+.err{color:#a00;margin:6px 0 0;min-height:1em}
+</style>
+</head>
+<body>
+<div id="app">
+<h1>New quote — Step 2 of 3</h1>
+<div class="sec">
+<h2><button type="button" class="hd" id="h1" aria-expanded="true" aria-controls="b1">Business details</button></h2>
+<div class="bd" id="b1" role="region" aria-labelledby="h1">
+<div class="row"><label for="bn">Business name</label><input type="text" id="bn"></div>
+<div class="row"><label for="ind">Industry</label><input type="text" id="ind" autocomplete="off" aria-controls="sug"><ul id="sug" role="listbox" aria-label="Industry" hidden></ul></div>
+<p class="err" id="e1"></p>
+</div>
+</div>
+<div class="sec">
+<h2><button type="button" class="hd" id="h2" aria-expanded="false" aria-controls="b2">Coverage options</button></h2>
+<div class="bd" id="b2" role="region" aria-labelledby="h2" hidden>
+<div class="row"><label for="lim">Liability limit</label><select id="lim"><option value="">— Select —</option><option value="500000">500,000</option><option value="1000000">1,000,000</option><option value="2000000">2,000,000</option></select></div>
+<div class="row"><label for="ded">Deductible</label><select id="ded"><option value="">— Select —</option><option value="500">500</option><option value="1000">1,000</option><option value="2500">2,500</option></select></div>
+<div class="row"><input type="checkbox" id="eb"> <label class="ck" for="eb">Include equipment breakdown</label></div>
+<p class="err" id="e2"></p>
+</div>
+</div>
+<button type="button" id="go">Continue</button>
+</div>
+<script>
+(function(){
+function code(s){let h=7;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i)*(i+1))%60466176}return 'CF-'+h.toString(36).toUpperCase().padStart(5,'0')}
+var IND=["Landscaping Services","Land Surveying","Janitorial Services","Plumbing Contractors","Retail Bakery","IT Consulting"];
+function $(i){return document.getElementById(i)}
+var h=[$("h1"),$("h2")],b=[$("b1"),$("b2")],ind=$("ind"),sug=$("sug"),e1=$("e1"),e2=$("e2");
+var chosen=null;
+function open(n){for(var i=0;i<2;i++){b[i].hidden=i!==n;h[i].setAttribute("aria-expanded",i===n?"true":"false")}}
+h[0].addEventListener("click",function(){open(0)});
+h[1].addEventListener("click",function(){open(1)});
+ind.addEventListener("input",function(){
+chosen=null;
+var q=ind.value.trim().toLowerCase();
+sug.innerHTML="";
+if(q.length<2){sug.hidden=true;return}
+var m=IND.filter(function(x){return x.toLowerCase().indexOf(q)>=0});
+m.forEach(function(x){
+var li=document.createElement("li");li.setAttribute("role","option");li.textContent=x;
+li.addEventListener("click",function(){ind.value=x;chosen=x;sug.hidden=true;sug.innerHTML=""});
+sug.appendChild(li);
+});
+sug.hidden=m.length===0;
+});
+$("go").addEventListener("click",function(){
+e1.textContent="";e2.textContent="";
+var name=$("bn").value.trim(),lim=$("lim").value,ded=$("ded").value,eb=$("eb").checked;
+if(!name){e1.textContent="Enter the business name";return}
+if(!chosen){e1.textContent="Select an industry from the list";return}
+if(!lim){e2.textContent="Select a liability limit";return}
+if(!ded){e2.textContent="Select a deductible";return}
+var r=code(name+"|"+chosen+"|"+lim+"|"+ded+"|"+(eb?"Y":"N"));
+var a=$("app");a.innerHTML="";
+var t=document.createElement("h1");t.textContent="Step 3 of 3 — Review";
+var p=document.createElement("p");p.textContent="Quote reference: "+r;
+a.appendChild(t);a.appendChild(p);
+});
+})();
+</script>
+</body>
+</html>

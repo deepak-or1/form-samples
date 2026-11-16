@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Supporting documents</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;margin:24px;color:#222;max-width:720px}
+fieldset{border:1px solid #888;padding:8px 16px 14px}
+legend{font-weight:600}
+.row{margin:12px 0;position:relative}
+label{display:block;margin-bottom:4px;font-weight:600}
+input[type=text]{font:inherit;padding:6px 8px;border:1px solid #888;border-radius:4px;width:320px}
+button{font:inherit;padding:6px 12px;border:1px solid #888;border-radius:4px;background:#f2f2f2;cursor:pointer}
+.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+#cat{width:338px;text-align:left;background:#fff}
+ul[role=listbox]{list-style:none;margin:2px 0 0;padding:0;border:1px solid #888;width:336px;background:#fff;position:absolute;z-index:2}
+li[role=option]{padding:6px 8px;cursor:pointer}
+li[role=option]:hover{background:#e6eefc}
+#msg{margin-top:8px;color:#a00}
+</style>
+</head>
+<body>
+<div id="app">
+<h1>Supporting documents</h1>
+<fieldset>
+<legend>Add a document</legend>
+<div class="row"><label for="dn">Document name</label><input type="text" id="dn"></div>
+<div class="row">
+<label for="category">Category</label>
+<select name="category" id="category" class="vh"><option value=""></option><option>Application</option><option>Loss history</option><option>Financials</option><option>Other</option></select>
+<button type="button" id="cat" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="cl">Select category</button>
+<ul id="cl" role="listbox" hidden><li role="option">Application</li><li role="option">Loss history</li><li role="option">Financials</li><li role="option">Other</li></ul>
+</div>
+<button type="button" id="add">Add document</button>
+<div id="msg" aria-live="polite"></div>
+</fieldset>
+<h2>Staged documents</h2>
+<p id="none">None</p>
+<ul id="staged"></ul>
+<button type="button" id="fin">Finish</button>
+</div>
+<script>
+(function(){
+function code(s){let h=7;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i)*(i+1))%60466176}return 'CF-'+h.toString(36).toUpperCase().padStart(5,'0')}
+function $(i){return document.getElementById(i)}
+var dn=$("dn"),nat=$("category"),cb=$("cat"),cl=$("cl"),msg=$("msg"),staged=$("staged"),none=$("none");
+var cat=null,rows=[];
+function setOpen(o){cl.hidden=!o;cb.setAttribute("aria-expanded",o?"true":"false")}
+cb.addEventListener("click",function(){setOpen(cl.hidden)});
+cl.querySelectorAll("[role=option]").forEach(function(li){
+li.addEventListener("click",function(){cat=li.textContent;cb.textContent=cat;nat.value=cat;setOpen(false)});
+});
+$("add").addEventListener("click",function(){
+var n=dn.value.trim();
+if(!n){msg.textContent="Enter a document name.";return}
+if(!cat){msg.textContent="Category is required.";return}
+rows.push([n,cat]);
+var li=document.createElement("li");li.textContent=n+" — "+cat;staged.appendChild(li);none.hidden=true;
+dn.value="";cat=null;nat.value="";cb.textContent="Select category";msg.textContent="";
+});
+$("fin").addEventListener("click",function(){
+if(rows.length<2){msg.textContent="Add at least two documents.";return}
+var c=code(rows.map(function(r){return r[0]+"|"+r[1]}).join(";"));
+var a=$("app");a.innerHTML="";var p=document.createElement("p");p.textContent="Submitted. Confirmation: "+c;a.appendChild(p);
+});
+})();
+</script>
+</body>
+</html>

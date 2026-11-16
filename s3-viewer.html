@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Policy documents</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;margin:24px;color:#222}
+table{border-collapse:collapse;min-width:480px}
+th,td{border:1px solid #999;padding:8px 12px;text-align:left}
+button{font:inherit;padding:5px 10px;border:1px solid #888;border-radius:4px;background:#f2f2f2;cursor:pointer}
+.wrap{display:flex;gap:16px;margin-top:12px}
+.side{display:flex;flex-direction:column;gap:8px}
+.side button{width:56px;height:72px}
+.side button[aria-pressed=true]{border:2px solid #246}
+.bar{display:flex;gap:6px;margin-bottom:8px}
+.bar button{padding:4px 6px;line-height:0}
+canvas{border:1px solid #999;background:#fff;display:block}
+pre{border:1px solid #ccc;background:#fafafa;padding:8px;margin-top:8px;width:584px;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<h1>Policy documents</h1>
+<div id="list">
+<table>
+<thead><tr><th>Term</th><th>Document</th><th></th></tr></thead>
+<tbody>
+<tr><td>2024–2025</td><td>Declarations</td><td><button type="button" data-d="0">View</button></td></tr>
+<tr><td>2025–2026</td><td>Declarations</td><td><button type="button" data-d="1">View</button></td></tr>
+<tr><td>2026–2027</td><td>Declarations</td><td><button type="button" data-d="2">View</button></td></tr>
+</tbody>
+</table>
+</div>
+<div id="view" hidden>
+<button type="button" id="back">Back to list</button>
+<div class="wrap">
+<div class="side"><button type="button" data-p="0">1</button><button type="button" data-p="1">2</button></div>
+<div>
+<div class="bar">
+<button type="button" id="zin"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M13 13l5 5M5 8h6M8 5v6"/></svg></button>
+<button type="button" id="zout"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M13 13l5 5M5 8h6"/></svg></button>
+<button type="button" id="fit"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="2"><path d="M1 10h18M5 6l-4 4 4 4M15 6l4 4-4 4"/></svg></button>
+<button type="button" id="txt"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="2"><path d="M3 4h14M3 8h14M3 12h14M3 16h9"/></svg></button>
+</div>
+<canvas id="cv" width="600" height="400"></canvas>
+<pre id="pt" hidden></pre>
+</div>
+</div>
+</div>
+<script>
+(function(){
+var D=[["REVDTEFSQVRJT05TIC0gUEFHRSAxCk5hbWVkIGluc3VyZWQ6IEhhcmJvcmxpbmUgRmFicmljYXRpb24gTExDCk1haWxpbmcgYWRkcmVzczogMjI5MCBLZXNzbGVyIEF2ZQpEYXl0b24sIE9IIDQ1NDAyClBvbGljeSBwZXJpb2Q6IDAzLzAxLzIwMjQgdG8gMDMvMDEvMjAyNQoxMjowMSBhLm0uIHN0YW5kYXJkIHRpbWUgYXQgdGhlIG1haWxpbmcgYWRkcmVzcw==","REVDTEFSQVRJT05TIC0gUEFHRSAyClBvbGljeSBudW1iZXI6IFFYLTE5ODgwLUEKRWFjaCBvY2N1cnJlbmNlIGxpbWl0OiAkMSwwMDAsMDAwCkdlbmVyYWwgYWdncmVnYXRlIGxpbWl0OiAkMiwwMDAsMDAwClBvbGljeSBmZWU6ICQxMjUuMDAKVG90YWwgcHJlbWl1bTogJDMsOTAyLjAw"],["REVDTEFSQVRJT05TIC0gUEFHRSAxCk5hbWVkIGluc3VyZWQ6IEhhcmJvcmxpbmUgRmFicmljYXRpb24gTExDCk1haWxpbmcgYWRkcmVzczogMjI5MCBLZXNzbGVyIEF2ZQpEYXl0b24sIE9IIDQ1NDAyClBvbGljeSBwZXJpb2Q6IDAzLzAxLzIwMjUgdG8gMDMvMDEvMjAyNgoxMjowMSBhLm0uIHN0YW5kYXJkIHRpbWUgYXQgdGhlIG1haWxpbmcgYWRkcmVzcw==","REVDTEFSQVRJT05TIC0gUEFHRSAyClBvbGljeSBudW1iZXI6IFFYLTIwNDE3LUIKRWFjaCBvY2N1cnJlbmNlIGxpbWl0OiAkMSwwMDAsMDAwCkdlbmVyYWwgYWdncmVnYXRlIGxpbWl0OiAkMiwwMDAsMDAwClBvbGljeSBmZWU6ICQxNTAuMDAKVG90YWwgcHJlbWl1bTogJDQsMzE4LjAw"],["REVDTEFSQVRJT05TIC0gUEFHRSAxCk5hbWVkIGluc3VyZWQ6IEhhcmJvcmxpbmUgRmFicmljYXRpb24gTExDCk1haWxpbmcgYWRkcmVzczogMjI5MCBLZXNzbGVyIEF2ZQpEYXl0b24sIE9IIDQ1NDAyClBvbGljeSBwZXJpb2Q6IDAzLzAxLzIwMjYgdG8gMDMvMDEvMjAyNwoxMjowMSBhLm0uIHN0YW5kYXJkIHRpbWUgYXQgdGhlIG1haWxpbmcgYWRkcmVzcw==","REVDTEFSQVRJT05TIC0gUEFHRSAyClBvbGljeSBudW1iZXI6IFFYLTIxMTA1LUMKRWFjaCBvY2N1cnJlbmNlIGxpbWl0OiAkMSwwMDAsMDAwCkdlbmVyYWwgYWdncmVnYXRlIGxpbWl0OiAkMiwwMDAsMDAwClBvbGljeSBmZWU6ICQxNzUuMDAKVG90YWwgcHJlbWl1bTogJDQsNzY2LjAw"]];
+function $(i){return document.getElementById(i)}
+var list=$("list"),view=$("view"),cv=$("cv"),cx=cv.getContext("2d"),pt=$("pt"),th=document.querySelectorAll("[data-p]");
+var doc=0,pg=0,sc=1,showText=false,B=16;
+function lines(){return atob(D[doc][pg]).split("\n")}
+function draw(){
+var ls=lines(),fs=B*sc;
+cx.fillStyle="#fff";cx.fillRect(0,0,cv.width,cv.height);
+cx.fillStyle="#111";cx.font=fs+"px Georgia,serif";cx.textBaseline="top";
+for(var i=0;i<ls.length;i++){cx.fillText(ls[i],20,20+i*fs*1.6)}
+for(var j=0;j<th.length;j++){th[j].setAttribute("aria-pressed",j===pg?"true":"false")}
+if(showText){pt.textContent=ls.join("\n")}
+}
+function fit(){
+var ls=lines(),w=0;cx.font=B+"px Georgia,serif";
+for(var i=0;i<ls.length;i++){w=Math.max(w,cx.measureText(ls[i]).width)}
+sc=w?(cv.width-40)/w:1;draw();
+}
+document.querySelectorAll("[data-d]").forEach(function(btn){
+btn.addEventListener("click",function(){
+doc=Number(btn.getAttribute("data-d"));pg=0;sc=1;showText=false;pt.hidden=true;pt.textContent="";
+list.hidden=true;view.hidden=false;draw();
+});
+});
+th.forEach(function(btn){btn.addEventListener("click",function(){pg=Number(btn.getAttribute("data-p"));draw()})});
+$("back").addEventListener("click",function(){showText=false;pt.hidden=true;pt.textContent="";cx.clearRect(0,0,cv.width,cv.height);view.hidden=true;list.hidden=false});
+$("zin").addEventListener("click",function(){sc=Math.min(sc*1.25,4);draw()});
+$("zout").addEventListener("click",function(){sc=Math.max(sc/1.25,0.4);draw()});
+$("fit").addEventListener("click",fit);
+$("txt").addEventListener("click",function(){
+showText=!showText;
+if(showText){pt.hidden=false;pt.textContent=lines().join("\n")}else{pt.hidden=true;pt.textContent=""}
+});
+})();
+</script>
+</body>
+</html>

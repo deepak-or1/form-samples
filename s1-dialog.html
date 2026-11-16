@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Location 1 — Classifications</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;margin:24px;color:#222;max-width:720px}
+.row{margin:14px 0}
+label{display:block;margin-bottom:4px;font-weight:600}
+input,select,button{font:inherit;padding:6px 8px;border:1px solid #888;border-radius:4px}
+button{background:#f2f2f2;cursor:pointer}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center}
+.ov[hidden]{display:none}
+.dlg{background:#fff;border:1px solid #666;border-radius:6px;padding:16px 20px;width:440px}
+.res{margin:12px 0;min-height:40px;border:1px solid #ccc;padding:6px}
+.res div{padding:3px 0}
+.res label{display:inline;font-weight:400}
+.acts{text-align:right}
+#msg{margin-top:8px;color:#a00}
+</style>
+</head>
+<body>
+<h1>Location 1 — Classifications</h1>
+<div id="main">
+<div class="row"><label for="cc">Class code</label><input id="cc" type="text" readonly> <button type="button" id="find" aria-disabled="true" data-requires="state">Search class codes</button></div>
+<div class="row" id="prow" hidden><label for="pay">Annual payroll</label><input id="pay" type="number" min="0" step="1"></div>
+<div class="row"><label for="st">State *</label><select id="st"><option value="">— Select —</option><option value="OH">OH</option><option value="PA">PA</option><option value="NY">NY</option></select></div>
+<div class="row"><button type="button" id="save">Save location</button><div id="msg" aria-live="polite"></div></div>
+</div>
+<div class="ov" id="ov" hidden>
+<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dt">
+<h2 id="dt">Class code search</h2>
+<label for="term">Search term</label>
+<input id="term" type="text"> <button type="button" id="go">Search</button>
+<div class="res" id="res"></div>
+<div class="acts"><button type="button" id="sel">Select</button> <button type="button" id="cxl">Cancel</button></div>
+</div>
+</div>
+<script>
+(function(){
+function code(s){let h=7;for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i)*(i+1))%60466176}return 'CF-'+h.toString(36).toUpperCase().padStart(5,'0')}
+var L=[["8810","Clerical Office"],["8742","Outside Sales"],["5183","Plumbing"],["9015","Building Operations"],["0042","Landscape Gardening"],["8017","Retail Store"]];
+function $(i){return document.getElementById(i)}
+var st=$("st"),fb=$("find"),ov=$("ov"),res=$("res"),term=$("term"),cc=$("cc"),pay=$("pay"),prow=$("prow"),msg=$("msg");
+var picked=null;
+st.addEventListener("change",function(){if(st.value){fb.removeAttribute("aria-disabled")}else{fb.setAttribute("aria-disabled","true")}});
+fb.addEventListener("click",function(){
+if(!st.value)return;
+res.innerHTML="";term.value="";ov.hidden=false;term.focus();
+});
+$("go").addEventListener("click",function(){
+var q=term.value.trim().toLowerCase();
+res.innerHTML="";
+L.forEach(function(r,i){
+if(q&&r[0].toLowerCase().indexOf(q)<0&&r[1].toLowerCase().indexOf(q)<0)return;
+var d=document.createElement("div");
+var rb=document.createElement("input");rb.type="radio";rb.name="cr";rb.value=String(i);rb.id="cr"+i;
+var lb=document.createElement("label");lb.htmlFor=rb.id;lb.textContent=" "+r[0]+" "+r[1];
+d.appendChild(rb);d.appendChild(lb);res.appendChild(d);
+});
+});
+$("sel").addEventListener("click",function(){
+var c=res.querySelector("input:checked");
+if(!c)return;
+picked=L[Number(c.value)];
+cc.value=picked[0]+" "+picked[1];
+prow.hidden=false;ov.hidden=true;fb.focus();
+});
+$("cxl").addEventListener("click",function(){ov.hidden=true;fb.focus()});
+$("save").addEventListener("click",function(){
+var p=Number(pay.value);
+if(picked&&pay.value!==""&&isFinite(p)&&p>0&&st.value){
+var t="Saved. Confirmation: "+code(st.value+"|"+picked[0]+"|"+String(Math.trunc(p)));
+var m=$("main");m.innerHTML="";var e=document.createElement("p");e.textContent=t;m.appendChild(e);
+}else{msg.textContent="Complete the required fields."}
+});
+})();
+</script>
+</body>
+</html>
